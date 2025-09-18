@@ -1,0 +1,14 @@
+services:
+  - type: web
+    name: wert-widget
+    env: node
+    plan: free
+    buildCommand: "npm install"
+    startCommand: "npm start"
+    envVars:
+      - key: WERT_PARTNER_API_KEY
+        sync: false
+      - key: WERT_PRIVATE_KEY
+        sync: false
+      - key: WERT_PARTNER_ID
+        value: "01K0FHM9K6ATK1CYCHMV34Z0YG"
