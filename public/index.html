@@ -1,0 +1,70 @@
+<!doctype html>
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <title>Wert Widget Example (Sandbox)</title>
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <style>
+      body {
+        font-family: system-ui, sans-serif;
+        padding: 2rem;
+      }
+      .btn {
+        padding: 0.6rem 1rem;
+        border-radius: 6px;
+        background: #222;
+        color: #fff;
+        cursor: pointer;
+        border: none;
+      }
+    </style>
+  </head>
+  <body>
+    <h1>Wert widget (sandbox)</h1>
+    <label>
+      Amount:
+      <input id="amount" type="number" value="10" min="1" />
+    </label>
+    <label style="margin-left: 1rem">
+      Currency:
+      <input id="currency" type="text" value="USD" />
+    </label>
+    <div style="margin-top: 1rem">
+      <button id="open" class="btn">Open Wert widget</button>
+    </div>
+
+    <script type="module">
+      import WertWidget from "https://unpkg.com/@wert-io/widget-initializer?module";
+
+      const PARTNER_ID = "01K0FHM9K6ATK1CYCHMV34Z0YG";
+      const ORIGIN = "https://sandbox.wert.io";
+
+      document.getElementById("open").addEventListener("click", async () => {
+        const amount = Number(document.getElementById("amount").value || 10);
+        const currency = (
+          document.getElementById("currency").value || "USD"
+        ).toUpperCase();
+
+        const resp = await fetch("/api/create-wert-session", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ amount, currency }),
+        });
+
+        const data = await resp.json();
+        console.log("Session response:", data);
+
+        const sessionId = data.session_id ?? data.id ?? null;
+
+        const widgetOptions = {
+          partner_id: PARTNER_ID,
+          origin: ORIGIN,
+          ...(sessionId ? { session_id: sessionId } : {}),
+        };
+
+        const wert = new WertWidget(widgetOptions);
+        wert.open();
+      });
+    </script>
+  </body>
+</html>
